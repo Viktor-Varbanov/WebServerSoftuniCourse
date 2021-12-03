@@ -49,10 +49,9 @@ namespace WebServer.ServerService.Http
                 if (headerLine != string.Empty)
                 {
                     var headerParts = headerLine.Split(": ");
-                    var httpHeader = new HttpHeader();
-                    httpHeader.Name = headerParts[0];
-                    httpHeader.Value = headerParts[1].Trim();
-                    headers.Add(httpHeader);
+                    string name = headerParts[0];
+                    string value = headerParts[1];
+                    headers.Add(name, value);
                 }
             }
 

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace WebServer.ServerService.Http
 {
-    public class HttpHeaderCollection
+    public class HttpHeaderCollection : IEnumerable<HttpHeader>
     {
         private readonly Dictionary<string, HttpHeader> headers;
 
@@ -12,14 +13,16 @@ namespace WebServer.ServerService.Http
             this.headers = new Dictionary<string, HttpHeader>();
         }
 
-        public void Add(HttpHeader header)
+        public void Add(string name, string value)
         {
-            if (!headers.ContainsKey(header.Name))
-            {
-                headers.Add(header.Name, header);
-            }
+            var header = new HttpHeader(name, value);
+
+            this.headers.Add(name, header);
         }
 
         public int Count => headers.Count;
+        public IEnumerator<HttpHeader> GetEnumerator() => this.headers.Values.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
     }
 }

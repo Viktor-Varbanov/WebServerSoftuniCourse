@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using WebServer.ServerService.Responses;
 
 namespace WebServer.Server
 {
@@ -8,7 +9,8 @@ namespace WebServer.Server
     {
         public static async Task Main()
         {
-            var httpServer = new HttpServer("127.0.0.1", 8081);
+            var httpServer = new HttpServer(routes => routes
+                .MapGet("/", new TextResponse("Hello from Ivo!")));
             await httpServer.Start();
         }
     }
