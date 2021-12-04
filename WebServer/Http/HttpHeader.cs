@@ -1,6 +1,6 @@
-﻿using WebServer.ServerService.Common;
+﻿using WebServer.Common;
 
-namespace WebServer.ServerService.Http
+namespace WebServer.Http
 {
     public class HttpHeader
     {

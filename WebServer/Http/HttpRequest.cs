@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace WebServer.ServerService.Http
+namespace WebServer.Http
 {
     public class HttpRequest
     {
@@ -59,8 +59,8 @@ namespace WebServer.ServerService.Http
             return headers;
         }
 
-        private static Dictionary<string, string> ParseQuery(string urlParts)
-            => urlParts[1]
+        private static Dictionary<string, string> ParseQuery(string queryString)
+            => queryString
                       .Split('&')
                       .Select(part => part.Split('='))
                       .Where(part => part.Length == 2)

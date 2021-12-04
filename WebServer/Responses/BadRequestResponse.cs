@@ -1,6 +1,6 @@
-﻿using WebServer.ServerService.Http;
+﻿using WebServer.Http;
 
-namespace WebServer.ServerService.Responses
+namespace WebServer.Responses
 {
     public class BadRequestResponse : HttpResponse
     {

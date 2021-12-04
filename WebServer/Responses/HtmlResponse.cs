@@ -1,4 +1,4 @@
-﻿namespace WebServer.ServerService.Responses
+﻿namespace WebServer.Responses
 {
     public class HtmlResponse : ContentResponse
     {
