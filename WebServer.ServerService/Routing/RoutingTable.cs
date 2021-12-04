@@ -44,7 +44,7 @@ namespace WebServer.ServerService.Routing
             var requestHttpMethod = httpRequest.Method;
             var url = httpRequest.Url;
 
-            if (!_routes.ContainsKey(requestHttpMethod) ||
+            if (!_routes.ContainsKey(requestHttpMethod) &&
                 _routes[requestHttpMethod].ContainsKey(url))
             {
                 return new NotFoundResponse();

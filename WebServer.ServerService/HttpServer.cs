@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Net;
 using System.Threading.Tasks;
 using WebServer.ServerService.Http;
 using WebServer.ServerService.Routing;
@@ -37,39 +37,51 @@ namespace WebServer.ServerService
 
         public async Task Start()
         {
-            this._tcpListener.Start();
+            _tcpListener.Start();
+            Console.WriteLine("Server is starting");
 
             while (true)
             {
                 var connection = await _tcpListener.AcceptTcpClientAsync();
 
                 var networkStream = connection.GetStream();
-                var requestBody = await ReadRequest(networkStream);
-                var request = HttpRequest.Parse(requestBody);
+
+                var requestText = await ReadRequest(networkStream);
+
+                var request = HttpRequest.Parse(requestText);
+
                 var response = _routingTable.MatchRequest(request);
+
                 await WriteResponse(networkStream, response);
+
                 connection.Close();
             }
         }
 
-        public void Stop()
-        {
-        }
-
         private async Task<string> ReadRequest(NetworkStream networkStream)
         {
-            int bufferLenght = 1024;
-            var buffer = new byte[bufferLenght];
-            var requestBuilder = new StringBuilder();
-            while (networkStream.DataAvailable)
-            {
-                var bytesRead = await networkStream.ReadAsync(buffer, 0, bufferLenght);
+            var bufferLength = 1024;
+            var buffer = new byte[bufferLength];
 
-                // here we use bytesRead because if request is 500 bytes we will read only that much of it
+            var totalBytes = 0;
+
+            var requestBuilder = new StringBuilder();
+
+            do
+            {
+                var bytesRead = await networkStream.ReadAsync(buffer, 0, bufferLength);
+
+                totalBytes += bytesRead;
+
+                if (totalBytes > 10 * 1024)
+                {
+                    throw new InvalidOperationException("Request is too large.");
+                }
+
                 requestBuilder.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
             }
+            while (networkStream.DataAvailable);
 
-            Console.WriteLine(requestBuilder.ToString());
             return requestBuilder.ToString();
         }
 
