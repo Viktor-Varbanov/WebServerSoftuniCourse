@@ -59,13 +59,19 @@ namespace WebServer.ServerService.Http
             return headers;
         }
 
+        private static Dictionary<string, string> ParseQuery(string urlParts)
+            => urlParts[1]
+                      .Split('&')
+                      .Select(part => part.Split('='))
+                      .Where(part => part.Length == 2)
+                      .ToDictionary(p => p[0], p => p[1]);
+
         private static (string Path, Dictionary<string, string> Query) ParseUrl(string url)
         {
             var urlParts = url.Split("?");
 
             var path = urlParts[0];
-            var query = new Dictionary<string, string>();
-            var queryString = urlParts[1];
+            var query = urlParts.Length > 1 ? ParseQuery(urlParts[1]) : new Dictionary<string, string>();
 
             return (path, query);
         }
