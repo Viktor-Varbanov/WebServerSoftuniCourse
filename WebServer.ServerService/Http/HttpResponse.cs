@@ -1,8 +1,8 @@
 ﻿using System.Text;
+using System;
 
 namespace WebServer.ServerService.Http
 {
-    using System;
     public abstract class HttpResponse
     {
         protected HttpResponse(HttpStatusCode statusCode)
@@ -11,6 +11,7 @@ namespace WebServer.ServerService.Http
             Headers.Add("Date", $"{DateTime.UtcNow:r}");
             Headers.Add("Server", "WebServer");
         }
+
         public HttpStatusCode StatusCode { get; private set; }
 
         public HttpHeaderCollection Headers { get; } = new();

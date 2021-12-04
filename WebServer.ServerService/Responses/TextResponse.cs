@@ -1,28 +1,10 @@
-﻿using System.Text;
-using WebServer.ServerService.Common;
-
-namespace WebServer.ServerService.Responses
+﻿namespace WebServer.ServerService.Responses
 {
-    using Http;
-
-    public class TextResponse : HttpResponse
+    public class TextResponse : ContentResponse
     {
-        public TextResponse(string text, string contentType)
-            : base(HttpStatusCode.OK)
+        public TextResponse(string content) :
+            base(content, "text/plain; charset=UTF-8")
         {
-            Guard.AgainstNull(text);
-            var contentLength = Encoding.UTF8.GetByteCount(text).ToString();
-
-            this.Headers.Add("Content-Type", contentType);
-            this.Headers.Add("Content-Length", contentLength);
-
-            this.Content = text;
-        }
-
-        public TextResponse(string text)
-            : this(text, "text/plain; charset=UTF-8")
-        {
-
         }
     }
 }

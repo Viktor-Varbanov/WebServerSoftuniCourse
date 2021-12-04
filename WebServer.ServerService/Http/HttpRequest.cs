@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace WebServer.ServerService.Http
 {
-    using System.Collections.Generic;
-
     public class HttpRequest
     {
         private const string NewLine = "\r\n";
+
         public HttpMethod Method { get; private set; }
 
         public string Url { get; set; }
@@ -39,7 +39,6 @@ namespace WebServer.ServerService.Http
             return parsedRequest;
         }
 
-
         private static HttpHeaderCollection ParseHttpHeaderCollection(IEnumerable<string> lines)
         {
             var headers = new HttpHeaderCollection();
@@ -48,7 +47,7 @@ namespace WebServer.ServerService.Http
             {
                 if (headerLine != string.Empty)
                 {
-                    var headerParts = headerLine.Split(": ");
+                    string[] headerParts = headerLine.Split(": ");
                     string name = headerParts[0];
                     string value = headerParts[1];
                     headers.Add(name, value);
@@ -63,17 +62,20 @@ namespace WebServer.ServerService.Http
             switch (httpMethod.ToUpper())
             {
                 case "GET":
-                    return HttpMethod.GET;
+                    return HttpMethod.Get;
+
                 case "POST":
-                    return HttpMethod.POST;
+                    return HttpMethod.Post;
+
                 case "PUT":
-                    return HttpMethod.PUT;
+                    return HttpMethod.Put;
+
                 case "DELETE":
-                    return HttpMethod.DELETE;
+                    return HttpMethod.Delete;
+
                 default:
                     throw new ArgumentException("The method is not supported!");
             }
         }
     }
 }
-

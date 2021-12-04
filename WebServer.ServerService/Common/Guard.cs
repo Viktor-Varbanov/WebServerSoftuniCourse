@@ -1,7 +1,7 @@
-﻿namespace WebServer.ServerService.Common
-{
-    using System;
+﻿using System;
 
+namespace WebServer.ServerService.Common
+{
     public static class Guard
     {
         public static void AgainstNull(object obj, string name = null)

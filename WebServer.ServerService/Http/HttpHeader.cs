@@ -1,15 +1,18 @@
-﻿namespace WebServer.ServerService.Http
+﻿using WebServer.ServerService.Common;
+
+namespace WebServer.ServerService.Http
 {
-    using Common;
     public class HttpHeader
     {
         public HttpHeader(string name, string value)
         {
             Guard.AgainstNull(name, nameof(name));
             Guard.AgainstNull(value, nameof(value));
-            this.Name = name;
-            this.Value = value;
+
+            Name = name;
+            Value = value;
         }
+
         public string Name { get; set; }
 
         public string Value { get; set; }

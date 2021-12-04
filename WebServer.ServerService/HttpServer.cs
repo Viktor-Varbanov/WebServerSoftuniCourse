@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Text;
+using System.Net;
 using System.Threading.Tasks;
 using WebServer.ServerService.Http;
 using WebServer.ServerService.Routing;
 
 namespace WebServer.ServerService
 {
-    using System.Net;
     public class HttpServer
     {
-        private readonly IPAddress ipAddress;
-        private readonly int port;
-        private readonly TcpListener tcpListener;
-        public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTable)
-        {
-            this.ipAddress = IPAddress.Parse(ipAddress);
-            this.port = port;
+        private readonly IPAddress _ipAddress;
+        private readonly int _port;
+        private readonly TcpListener _tcpListener;
+        private readonly IRoutingTable _routingTable;
 
-            tcpListener = new TcpListener(this.ipAddress, port);
+        public HttpServer(string ipAddress, int port, Action<IRoutingTable> routingTableConfiguration)
+        {
+            _ipAddress = IPAddress.Parse(ipAddress);
+            _port = port;
+
+            _tcpListener = new TcpListener(_ipAddress, _port);
+            _routingTable = new RoutingTable();
+            routingTableConfiguration(_routingTable);
         }
 
         public HttpServer(int port, Action<IRoutingTable> routingTable)
@@ -33,26 +37,23 @@ namespace WebServer.ServerService
 
         public async Task Start()
         {
-            this.tcpListener.Start();
-
+            this._tcpListener.Start();
 
             while (true)
             {
-
-                var connection = await tcpListener.AcceptTcpClientAsync();
+                var connection = await _tcpListener.AcceptTcpClientAsync();
 
                 var networkStream = connection.GetStream();
                 var requestBody = await ReadRequest(networkStream);
-                var requestText = HttpRequest.Parse(requestBody);
-
-                await WriteResponse(networkStream);
+                var request = HttpRequest.Parse(requestBody);
+                var response = _routingTable.MatchRequest(request);
+                await WriteResponse(networkStream, response);
                 connection.Close();
             }
         }
 
         public void Stop()
         {
-
         }
 
         private async Task<string> ReadRequest(NetworkStream networkStream)
@@ -72,23 +73,11 @@ namespace WebServer.ServerService
             return requestBuilder.ToString();
         }
 
-        private async Task WriteResponse(NetworkStream networkStream)
+        private async Task WriteResponse(NetworkStream networkStream, HttpResponse response)
         {
-            string content = "<h1>Здравей, from the server!<h1>";
-            int contentLength = Encoding.UTF8.GetByteCount(content);
-
-            var response = $@"HTTP/1.1 200 OK
-Server: WebServer
-Date: {DateTime.UtcNow:r}
-Content-Length: {contentLength}
-Content-Type: text/html; charset=UTF-8
-
-{content}";
-
-            var responseBytes = Encoding.UTF8.GetBytes(response);
+            var responseBytes = Encoding.UTF8.GetBytes(response.ToString());
 
             await networkStream.WriteAsync(responseBytes);
-
         }
     }
 }

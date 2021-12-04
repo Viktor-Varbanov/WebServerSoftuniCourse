@@ -1,11 +1,13 @@
-﻿namespace WebServer.ServerService.Routing
-{
-    using Http;
+﻿using WebServer.ServerService.Http;
 
+namespace WebServer.ServerService.Routing
+{
     public interface IRoutingTable
     {
-        void Map(string url, HttpMethod httpMethod, HttpResponse response);
+        IRoutingTable Map(string url, HttpMethod httpMethod, HttpResponse response);
 
-        void MapGet(string ulr, HttpResponse response);
+        IRoutingTable MapGet(string url, HttpResponse response);
+
+        HttpResponse MatchRequest(HttpRequest httpRequest);
     }
 }
