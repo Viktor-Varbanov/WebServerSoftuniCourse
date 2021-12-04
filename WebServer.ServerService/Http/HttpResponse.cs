@@ -26,7 +26,7 @@ namespace WebServer.ServerService.Http
 
             foreach (var header in Headers)
             {
-                response.Append(header);
+                response.AppendLine(header.ToString());
             }
 
             response.AppendLine();

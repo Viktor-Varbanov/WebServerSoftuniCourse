@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using WebServer.ServerService.Common;
 using WebServer.ServerService.Http;
 using WebServer.ServerService.Responses;
@@ -21,28 +20,32 @@ namespace WebServer.ServerService.Routing
             };
         }
 
-        public IRoutingTable Map(string url, HttpMethod httpMethod, HttpResponse response)
+        public IRoutingTable Map(
+            HttpMethod httpMethod,
+            string path,
+            HttpResponse response)
         {
-            return httpMethod switch
-            {
-                HttpMethod.Get => MapGet(url, response),
-                _ => throw new ArgumentException()
-            };
-        }
-
-        public IRoutingTable MapGet(string url, HttpResponse response)
-        {
-            Guard.AgainstNull(url, nameof(url));
+            Guard.AgainstNull(path, nameof(path));
             Guard.AgainstNull(response, nameof(response));
 
-            _routes[HttpMethod.Get][url] = response;
+            _routes[httpMethod][path] = response;
             return this;
+        }
+
+        public IRoutingTable MapGet(string path, HttpResponse response)
+        {
+            return Map(HttpMethod.Get, path, response);
+        }
+
+        public IRoutingTable MapPost(string path, HttpResponse response)
+        {
+            return Map(HttpMethod.Post, path, response);
         }
 
         public HttpResponse MatchRequest(HttpRequest httpRequest)
         {
             var requestHttpMethod = httpRequest.Method;
-            var url = httpRequest.Url;
+            var url = httpRequest.Path;
 
             if (!_routes.ContainsKey(requestHttpMethod) &&
                 _routes[requestHttpMethod].ContainsKey(url))

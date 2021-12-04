@@ -10,7 +10,9 @@ namespace WebServer.ServerService.Http
 
         public HttpMethod Method { get; private set; }
 
-        public string Url { get; set; }
+        public Dictionary<string, string> Query { get; set; }
+
+        public string Path { get; set; }
 
         public HttpHeaderCollection Headers { get; private set; }
 
@@ -34,7 +36,7 @@ namespace WebServer.ServerService.Http
                 Body = body,
                 Headers = headerCollection,
                 Method = method,
-                Url = url
+                Path = url
             };
             return parsedRequest;
         }
@@ -55,6 +57,17 @@ namespace WebServer.ServerService.Http
             }
 
             return headers;
+        }
+
+        private static (string Path, Dictionary<string, string> Query) ParseUrl(string url)
+        {
+            var urlParts = url.Split("?");
+
+            var path = urlParts[0];
+            var query = new Dictionary<string, string>();
+            var queryString = urlParts[1];
+
+            return (path, query);
         }
 
         private static HttpMethod ParseHttpMethod(string httpMethod)
